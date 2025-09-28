@@ -1,0 +1,6 @@
+:root { --gap: 12px; --mb: 16px; font-family: system-ui, sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 16px; }
+nav { margin-bottom: var(--mb); display: flex; gap: var(--gap); }
+a { color: inherit; text-decoration: none; }
+a[aria-current="page"] { text-decoration: underline; }

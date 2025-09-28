@@ -1,4 +1,3 @@
-// javascript
 import { NavLink, Routes, Route, Outlet } from "react-router";
 import Home from "./pages/home/Home.jsx";
 import CycleTracker from "./pages/cycletracker/CycleTracker.jsx";
