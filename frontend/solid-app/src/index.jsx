@@ -1,8 +1,22 @@
-/* @refresh reload */
-import { render } from 'solid-js/web'
-import './index.css'
-import App from './App.jsx'
+import { render } from "solid-js/web";
+import { Router, Route } from "@solidjs/router";
+import App from "./App.jsx";
+import Home from "./pages/home/Home.jsx";
+import CycleTracker from "./pages/cycletracker/CycleTracker.jsx";
+import WorkoutForm from "./pages/workoutform/WorkoutForm.jsx";
+import Auth from "./pages/auth/Auth.jsx";
+import NotFound from "./pages/NotFound.jsx";
+import "./index.css";
 
-const root = document.getElementById('root')
-
-render(() => <App />, root)
+render(
+  () => (
+    <Router root={App}>
+      <Route path="/" component={Home} />
+      <Route path="/cycle" component={CycleTracker} />
+      <Route path="/workout" component={WorkoutForm} />
+      <Route path="/auth" component={Auth} />
+      <Route path="*404" component={NotFound} />
+    </Router>
+  ),
+  document.getElementById("root")
+);
