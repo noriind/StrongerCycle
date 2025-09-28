@@ -1,62 +1,87 @@
 import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { useForm } from "../../hooks/useForm";
+import { validateEmail, validatePassword, validateConfirmPassword } from "../../utils/validation";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, register, isLoading, error, successMessage, clearMessages } = useAuth();
+  const { values, errors, handleChange, setFieldError, clearErrors, reset } = useForm({
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
 
   const validateForm = () => {
-    const newErrors = {};
-    
-    if (!email) newErrors.email = "Email is required";
-    if (!password) newErrors.password = "Password is required";
-    if (!isLogin && !confirmPassword) {
-      newErrors.confirmPassword = "Confirm password is required";
-    }
-    if (!isLogin && password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords don't match";
-    }
-    
-    return newErrors;
+    const emailError = validateEmail(values.email);
+    const passwordError = validatePassword(values.password);
+    const confirmPasswordError = !isLogin ? 
+      validateConfirmPassword(values.password, values.confirmPassword) : null;
+
+    if (emailError) setFieldError("email", emailError);
+    if (passwordError) setFieldError("password", passwordError);
+    if (confirmPasswordError) setFieldError("confirmPassword", confirmPasswordError);
+
+    return !emailError && !passwordError && !confirmPasswordError;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formErrors = validateForm();
     
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
-      return;
-    }
-    
-    setErrors({});
-    setIsLoading(true);
+    if (!validateForm()) return;
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log(isLogin ? "Login successful" : "Registration successful");
-    } catch (error) {
-      console.error("Auth error:", error);
-    } finally {
-      setIsLoading(false);
+      if (isLogin) {
+        await login(values.email, values.password);
+      } else {
+        await register(values.email, values.password);
+      }
+    } catch (err) {
+      // Error handled by useAuth hook
     }
+  };
+
+  const toggleMode = () => {
+    setIsLogin(!isLogin);
+    reset();
+    clearMessages();
   };
 
   return (
     <div style={{ maxWidth: 400, margin: "0 auto" }}>
       <h1>{isLogin ? "Login" : "Register"}</h1>
       
+      {successMessage && (
+        <div style={{ 
+          color: "green", 
+          backgroundColor: "#d4edda", 
+          padding: 12, 
+          borderRadius: 4, 
+          marginBottom: 16 
+        }}>
+          {successMessage}
+        </div>
+      )}
+
+      {error && (
+        <div style={{ 
+          color: "red", 
+          backgroundColor: "#f8d7da", 
+          padding: 12, 
+          borderRadius: 4, 
+          marginBottom: 16 
+        }}>
+          {error}
+        </div>
+      )}
+      
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: 16 }}>
           <input
             type="email"
             placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={values.email}
+            onChange={(e) => handleChange("email", e.target.value)}
             style={{
               width: "100%",
               padding: 8,
@@ -71,8 +96,8 @@ export default function Auth() {
           <input
             type="password"
             placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={values.password}
+            onChange={(e) => handleChange("password", e.target.value)}
             style={{
               width: "100%",
               padding: 8,
@@ -88,8 +113,8 @@ export default function Auth() {
             <input
               type="password"
               placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={values.confirmPassword}
+              onChange={(e) => handleChange("confirmPassword", e.target.value)}
               style={{
                 width: "100%",
                 padding: 8,
@@ -107,7 +132,7 @@ export default function Auth() {
           style={{
             width: "100%",
             padding: 12,
-            backgroundColor: "#007bff",
+            backgroundColor: isLoading ? "#6c757d" : "#007bff",
             color: "white",
             border: "none",
             borderRadius: 4,
@@ -122,13 +147,7 @@ export default function Auth() {
         {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
         <button
           type="button"
-          onClick={() => {
-            setIsLogin(!isLogin);
-            setErrors({});
-            setEmail("");
-            setPassword("");
-            setConfirmPassword("");
-          }}
+          onClick={toggleMode}
           style={{ background: "none", border: "none", color: "#007bff", cursor: "pointer" }}
         >
           {isLogin ? "Register" : "Login"}
