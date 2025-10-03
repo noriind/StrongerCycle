@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import authService from '../services/authService';
+import { useState } from "react";
+import authService from "../services/authService";
 
 export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,7 +10,7 @@ export const useAuth = () => {
     setIsLoading(true);
     setError(null);
     setSuccessMessage("");
-    
+
     try {
       const data = await authService.login(email, password);
       setSuccessMessage(data.message);
@@ -27,7 +27,7 @@ export const useAuth = () => {
     setIsLoading(true);
     setError(null);
     setSuccessMessage("");
-    
+
     try {
       const data = await authService.register(email, password);
       setSuccessMessage(data.message);
@@ -51,6 +51,6 @@ export const useAuth = () => {
     isLoading,
     error,
     successMessage,
-    clearMessages
+    clearMessages,
   };
 };

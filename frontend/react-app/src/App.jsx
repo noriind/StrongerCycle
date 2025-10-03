@@ -3,22 +3,42 @@ import Home from "./pages/home/Home.jsx";
 import CycleTracker from "./pages/cycletracker/CycleTracker.jsx";
 import WorkoutForm from "./pages/workoutform/WorkoutForm.jsx";
 import Auth from "./pages/auth/Auth.jsx";
+import "./App.css";
 
 function Layout() {
-  const linkStyle = ({ isActive }) => ({
-    marginRight: 12,
-    textDecoration: isActive ? "underline" : "none",
-  });
   return (
-    <>
-      <nav style={{ marginBottom: 16 }}>
-        <NavLink to="/" end style={linkStyle}>Home</NavLink>
-        <NavLink to="/cycle" style={linkStyle}>Cycle</NavLink>
-        <NavLink to="/workout" style={linkStyle}>Workout</NavLink>
-        <NavLink to="/auth" style={linkStyle}>Login/Register</NavLink>
+    <div className="app-layout">
+      <nav className="main-nav">
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+        >
+          Home
+        </NavLink>
+        <NavLink
+          to="/cycle"
+          className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+        >
+          CycleTracker
+        </NavLink>
+        <NavLink
+          to="/workout"
+          className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+        >
+          WorkoutForm
+        </NavLink>
+        <NavLink
+          to="/auth"
+          className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+        >
+          Login/Register
+        </NavLink>
       </nav>
-      <Outlet />
-    </>
+      <div className="content-area">
+        <Outlet />
+      </div>
+    </div>
   );
 }
 

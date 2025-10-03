@@ -1,3 +1,3 @@
 export default function WorkoutForm() {
-    return <h1>Workout Form</h1>;
-  }
+  return <h1>Workout Form</h1>;
+}

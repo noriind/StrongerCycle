@@ -1,40 +1,41 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useAuth } from "../../hooks/useAuth";
-import { useForm } from "../../hooks/useForm";
-import { validateEmail, validatePassword, validateConfirmPassword } from "../../utils/validation";
+import styles from "./Auth.module.css";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
-  const { login, register, isLoading, error, successMessage, clearMessages } = useAuth();
-  const { values, errors, handleChange, setFieldError, clearErrors, reset } = useForm({
-    email: "",
-    password: "",
-    confirmPassword: ""
+  const {
+    login,
+    register: registerUser,
+    isLoading,
+    error,
+    successMessage,
+    clearMessages,
+  } = useAuth();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
-  const validateForm = () => {
-    const emailError = validateEmail(values.email);
-    const passwordError = validatePassword(values.password);
-    const confirmPasswordError = !isLogin ? 
-      validateConfirmPassword(values.password, values.confirmPassword) : null;
+  const password = watch("password");
 
-    if (emailError) setFieldError("email", emailError);
-    if (passwordError) setFieldError("password", passwordError);
-    if (confirmPasswordError) setFieldError("confirmPassword", confirmPasswordError);
-
-    return !emailError && !passwordError && !confirmPasswordError;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-    
+  const onSubmit = async data => {
     try {
       if (isLogin) {
-        await login(values.email, values.password);
+        await login(data.email, data.password);
       } else {
-        await register(values.email, values.password);
+        await registerUser(data.email, data.password);
       }
     } catch (err) {
       // Error handled by useAuth hook
@@ -48,111 +49,97 @@ export default function Auth() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "0 auto" }}>
-      <h1>{isLogin ? "Login" : "Register"}</h1>
-      
-      {successMessage && (
-        <div style={{ 
-          color: "green", 
-          backgroundColor: "#d4edda", 
-          padding: 12, 
-          borderRadius: 4, 
-          marginBottom: 16 
-        }}>
-          {successMessage}
-        </div>
-      )}
+    <div className={styles.pageWrapper}>
+      <div className={styles.container}>
+        <h1 className={styles.title}>
+          {isLogin ? "Welcome Back" : "Create Account"}
+        </h1>
 
-      {error && (
-        <div style={{ 
-          color: "red", 
-          backgroundColor: "#f8d7da", 
-          padding: 12, 
-          borderRadius: 4, 
-          marginBottom: 16 
-        }}>
-          {error}
-        </div>
-      )}
-      
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 16 }}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={values.email}
-            onChange={(e) => handleChange("email", e.target.value)}
-            style={{
-              width: "100%",
-              padding: 8,
-              borderRadius: 4,
-              border: errors.email ? "1px solid red" : "1px solid #ccc"
-            }}
-          />
-          {errors.email && <div style={{ color: "red", fontSize: 12 }}>{errors.email}</div>}
-        </div>
-
-        <div style={{ marginBottom: 16 }}>
-          <input
-            type="password"
-            placeholder="Password"
-            value={values.password}
-            onChange={(e) => handleChange("password", e.target.value)}
-            style={{
-              width: "100%",
-              padding: 8,
-              borderRadius: 4,
-              border: errors.password ? "1px solid red" : "1px solid #ccc"
-            }}
-          />
-          {errors.password && <div style={{ color: "red", fontSize: 12 }}>{errors.password}</div>}
-        </div>
-
-        {!isLogin && (
-          <div style={{ marginBottom: 16 }}>
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              value={values.confirmPassword}
-              onChange={(e) => handleChange("confirmPassword", e.target.value)}
-              style={{
-                width: "100%",
-                padding: 8,
-                borderRadius: 4,
-                border: errors.confirmPassword ? "1px solid red" : "1px solid #ccc"
-              }}
-            />
-            {errors.confirmPassword && <div style={{ color: "red", fontSize: 12 }}>{errors.confirmPassword}</div>}
-          </div>
+        {successMessage && (
+          <div className={styles.successMessage}>{successMessage}</div>
         )}
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          style={{
-            width: "100%",
-            padding: 12,
-            backgroundColor: isLoading ? "#6c757d" : "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: 4,
-            cursor: isLoading ? "not-allowed" : "pointer"
-          }}
-        >
-          {isLoading ? "Loading..." : (isLogin ? "Login" : "Register")}
-        </button>
-      </form>
+        {error && <div className={styles.errorBanner}>{error}</div>}
 
-      <p style={{ textAlign: "center", marginTop: 16 }}>
-        {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-        <button
-          type="button"
-          onClick={toggleMode}
-          style={{ background: "none", border: "none", color: "#007bff", cursor: "pointer" }}
-        >
-          {isLogin ? "Register" : "Login"}
-        </button>
-      </p>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+          <div className={styles.inputGroup}>
+            <input
+              type="email"
+              placeholder="Email address"
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Invalid email format",
+                },
+              })}
+              className={`${styles.input} ${errors.email ? styles.inputError : ""}`}
+            />
+            {errors.email && (
+              <div className={styles.errorMessage}>{errors.email.message}</div>
+            )}
+          </div>
+
+          <div className={styles.inputGroup}>
+            <input
+              type="password"
+              placeholder="Password"
+              {...register("password", {
+                required: "Password is required",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters",
+                },
+              })}
+              className={`${styles.input} ${errors.password ? styles.inputError : ""}`}
+            />
+            {errors.password && (
+              <div className={styles.errorMessage}>
+                {errors.password.message}
+              </div>
+            )}
+          </div>
+
+          {!isLogin && (
+            <div className={styles.inputGroup}>
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                {...register("confirmPassword", {
+                  required: "Confirm password is required",
+                  validate: value =>
+                    value === password || "Passwords don't match",
+                })}
+                className={`${styles.input} ${errors.confirmPassword ? styles.inputError : ""}`}
+              />
+              {errors.confirmPassword && (
+                <div className={styles.errorMessage}>
+                  {errors.confirmPassword.message}
+                </div>
+              )}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={styles.submitButton}
+          >
+            {isLoading ? "Loading..." : isLogin ? "Sign In" : "Create Account"}
+          </button>
+        </form>
+
+        <div className={styles.toggleSection}>
+          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+          <button
+            type="button"
+            onClick={toggleMode}
+            className={styles.toggleButton}
+          >
+            {isLogin ? "Sign up" : "Sign in"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
