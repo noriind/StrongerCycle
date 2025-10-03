@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../hooks/useAuth";
+import { useRef } from "react";
 import styles from "./Auth.module.css";
 
 export default function Auth() {
+  // for checking the re-renders 
+  const renderCount = useRef(0);
+  renderCount.current ++;
+  console.log('Auth component render count:', renderCount.current, 'times');
   const [isLogin, setIsLogin] = useState(true);
   const {
     login,
