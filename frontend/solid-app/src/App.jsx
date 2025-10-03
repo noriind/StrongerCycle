@@ -1,15 +1,24 @@
 import { A } from "@solidjs/router";
+import "./App.css";
 
 export default function App(props) {
   return (
-    <>
-      <nav style={{ "margin-bottom": "16px" }}>
-        <A href="/" end style={{ "margin-right": "12px" }}>Home</A>
-        <A href="/cycle" style={{ "margin-right": "12px" }}>CycleTracker</A>
-        <A href="/workout" style={{ "margin-right": "12px" }}>WorkoutForm</A>
-        <A href="/auth" style={{ "margin-right": "12px" }}>Login/Register</A>
+    <div class="app-layout">
+      <nav class="main-nav">
+        <A href="/" end class="nav-link">
+          Home
+        </A>
+        <A href="/cycle" class="nav-link">
+          CycleTracker
+        </A>
+        <A href="/workout" class="nav-link">
+          WorkoutForm
+        </A>
+        <A href="/auth" class="nav-link">
+          Login/Register
+        </A>
       </nav>
-      {props.children}
-    </>
+      <div class="content-area">{props.children}</div>
+    </div>
   );
 }
