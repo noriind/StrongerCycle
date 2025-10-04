@@ -1,0 +1,39 @@
+const API_BASE = "http://localhost:5000";
+
+class AuthService {
+  async login(email, password) {
+    const response = await fetch(`${API_BASE}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+    console.log('User logged in successfully')
+
+    if (!response.ok) {
+      throw new Error(data.error || "Login failed");
+    }
+
+    return data;
+  }
+
+  async register(email, password) {
+    const response = await fetch(`${API_BASE}/api/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+    console.log('Registered successfully')
+
+    if (!response.ok) {
+      throw new Error(data.error || "Registration failed");
+    }
+
+    return data;
+  }
+}
+
+export default new AuthService();
