@@ -1,4 +1,6 @@
 import { createSignal } from "solid-js";
+import { useNavigate } from "@solidjs/router";
+import { useUser } from "../../context/UserContext.jsx";
 import styles from "./Auth.module.css";
 import authService from "../../services/authService";
 
@@ -8,6 +10,9 @@ export default function Auth() {
   // for checking the re-renders
   renderCount++;
   console.log("Auth component rendered", renderCount, "times");
+
+  const navigate = useNavigate();
+  const { login: setUserLoggedIn } = useUser();
   const [isLogin, setIsLogin] = createSignal(true);
   const [email, setEmail] = createSignal("");
   const [password, setPassword] = createSignal("");
@@ -18,8 +23,6 @@ export default function Auth() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-
-    // Clear previous messages
     setError(null);
     setSuccessMessage("");
     setIsLoading(true);
@@ -28,9 +31,27 @@ export default function Auth() {
       if (isLogin()) {
         const data = await authService.login(email(), password());
         setSuccessMessage(data.message);
+
+        setUserLoggedIn({
+          email: email(),
+          id: data.user?.id || "temp-id",
+          hasCompletedOnboarding: true,
+        });
+
+        navigate("/");
       } else {
         const data = await authService.register(email(), password());
         setSuccessMessage(data.message);
+
+        setUserLoggedIn({
+          email: email(),
+          id: data.user?.id || "temp-id",
+          hasCompletedOnboarding: false,
+        });
+
+        setTimeout(() => {
+          navigate("/onboarding");
+        }, 2000); // Wait 2 seconds to show success message
       }
     } catch (err) {
       setError(err.message);

@@ -6,6 +6,7 @@ import CycleTracker from "./pages/cycletracker/CycleTracker.jsx";
 import WorkoutForm from "./pages/workoutform/WorkoutForm.jsx";
 import Auth from "./pages/auth/Auth.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import Onboarding from "./pages/onboarding/Onboarding.jsx";
 import "./index.css";
 
 render(
@@ -15,6 +16,7 @@ render(
       <Route path="/cycle" component={CycleTracker} />
       <Route path="/workout" component={WorkoutForm} />
       <Route path="/auth" component={Auth} />
+      <Route path="/onboarding" component={Onboarding} />
       <Route path="*404" component={NotFound} />
     </Router>
   ),
