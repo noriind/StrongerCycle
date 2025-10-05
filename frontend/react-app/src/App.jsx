@@ -3,6 +3,8 @@ import Home from "./pages/home/Home.jsx";
 import CycleTracker from "./pages/cycletracker/CycleTracker.jsx";
 import WorkoutForm from "./pages/workoutform/WorkoutForm.jsx";
 import Auth from "./pages/auth/Auth.jsx";
+import Onboarding from "./pages/onboarding/Onboarding.jsx";
+
 import "./App.css";
 
 function Layout() {
@@ -50,6 +52,7 @@ export default function App() {
         <Route path="cycle" element={<CycleTracker />} />
         <Route path="workout" element={<WorkoutForm />} />
         <Route path="auth" element={<Auth />} />
+        <Route path="onboarding" element={<Onboarding />} />
       </Route>
     </Routes>
   );

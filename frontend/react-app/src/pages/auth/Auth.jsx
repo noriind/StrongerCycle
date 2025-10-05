@@ -2,14 +2,16 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../hooks/useAuth";
 import { useRef } from "react";
+import { useNavigate } from "react-router";
 import styles from "./Auth.module.css";
 
 export default function Auth() {
-  // for checking the re-renders 
+  // for checking the re-renders
   const renderCount = useRef(0);
-  renderCount.current ++;
-  console.log('Auth component render count:', renderCount.current, 'times');
+  renderCount.current++;
+  console.log("Auth component render count:", renderCount.current, "times");
   const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate();
   const {
     login,
     register: registerUser,
@@ -39,8 +41,14 @@ export default function Auth() {
     try {
       if (isLogin) {
         await login(data.email, data.password);
+        // After successful login, go to dashboard or home
+        navigate("/");
       } else {
         await registerUser(data.email, data.password);
+        // After successful registration, go to onboarding
+        setTimeout(() => {
+          navigate("/onboarding");
+        }, 2000); // Wait 2 seconds to show success message
       }
     } catch (err) {
       // Error handled by useAuth hook
