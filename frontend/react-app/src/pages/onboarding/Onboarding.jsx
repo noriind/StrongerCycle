@@ -21,6 +21,7 @@ export default function Onboarding() {
     trigger,
   } = useForm({
     defaultValues: {
+      email: user()?.email || user?.email, // Include user email
       firstName: "",
       age: "",
       fitnessLevel: "",

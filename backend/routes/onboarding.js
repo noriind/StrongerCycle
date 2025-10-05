@@ -12,11 +12,10 @@ router.post('/profile', async (req, res) => {
       motivationForTracking, experienceWithCycleTracking
     } = req.body;
 
-    // For now, we'll use a mock userId (later you'd get this from auth token)
-    const mockUserId = userId || '507f1f77bcf86cd799439011';
+    const uniqueId = userId || Date.now().toString(); // Uses timestamp as unique ID
 
     const profileData = {
-      userId: mockUserId,
+      userId: uniqueId,
       firstName,
       age,
       fitnessLevel,
@@ -33,7 +32,7 @@ router.post('/profile', async (req, res) => {
 
     // Upsert (update if exists, create if not)
     const profile = await UserProfile.findOneAndUpdate(
-      { userId: mockUserId },
+      { userId: uniqueId },
       profileData,
       { new: true, upsert: true }
     );

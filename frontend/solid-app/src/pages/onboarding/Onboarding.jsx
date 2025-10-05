@@ -48,6 +48,7 @@ export default function Onboarding() {
     setError(null);
 
     const formData = {
+      email: user()?.email || user?.email, // Include user email for proper userprofile creation for now
       firstName: firstName(),
       age: parseInt(age()),
       fitnessLevel: fitnessLevel(),
