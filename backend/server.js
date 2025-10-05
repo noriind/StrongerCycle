@@ -21,9 +21,13 @@ const connectDB = async () => {
 
 connectDB();
 
-//auth route
+//Import routes
 const authRoutes = require("./routes/auth");
+const onboardingRoutes = require("./routes/onboarding");
+
+//Use routes
 app.use("/api/auth", authRoutes);
+app.use("/api/onboarding", onboardingRoutes);
 
 app.get("/", (req, res) => {
     res.send("API is running...");
