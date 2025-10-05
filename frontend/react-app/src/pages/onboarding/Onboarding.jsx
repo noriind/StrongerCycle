@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
+import { useUser } from "../../context/UserContext";
 import onboardingService from "../../services/onboardingService";
 import styles from "./Onboarding.module.css";
 
 export default function Onboarding() {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+  const { user, setUser } = useUser();
 
   const {
     register,
@@ -52,7 +56,7 @@ export default function Onboarding() {
         ];
         break;
       case 3:
-        fieldsToValidate = ["goals", "preferredWorkoutTypes"];
+        fieldsToValidate = ["goals"];
         break;
       default:
         break;
@@ -76,6 +80,13 @@ export default function Onboarding() {
 
     try {
       await onboardingService.saveProfile(data);
+
+      setUser({
+        ...user,
+        hasCompletedOnboarding: true,
+        profile: data,
+      });
+
       setSuccessMessage(
         "Profile created successfully! Welcome to StrongCycles!"
       );
@@ -96,8 +107,6 @@ export default function Onboarding() {
         return (
           <PreferencesStep register={register} errors={errors} watch={watch} />
         );
-      case 4:
-        return <FinalStep register={register} errors={errors} />;
       default:
         return null;
     }
@@ -112,7 +121,10 @@ export default function Onboarding() {
             <p>{successMessage}</p>
             <button
               className={styles.primaryButton}
-              onClick={() => (window.location.href = "/")}
+              onClick={() => {
+                console.log("Before navigate - user:", user); // Add this
+                navigate("/");
+              }}
             >
               Go to Home
             </button>
@@ -342,24 +354,6 @@ function PreferencesStep({ register, errors, watch }) {
             </label>
           ))}
         </div>
-      </div>
-    </div>
-  );
-}
-
-function FinalStep({ register, errors }) {
-  return (
-    <div className={styles.stepContent}>
-      <h2>Almost Done!</h2>
-
-      <div className={styles.inputGroup}>
-        <label>What motivates you to track your cycle and training?</label>
-        <textarea
-          {...register("motivationForTracking")}
-          className={styles.textarea}
-          rows="4"
-          placeholder="Tell us what drives you to understand your body better..."
-        />
       </div>
     </div>
   );

@@ -1,10 +1,13 @@
 import { useState } from "react";
 import authService from "../services/authService";
+import { useUser } from "../context/UserContext";
 
 export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+
+  const { setUser } = useUser();
 
   const login = async (email, password) => {
     setIsLoading(true);
@@ -14,6 +17,13 @@ export const useAuth = () => {
     try {
       const data = await authService.login(email, password);
       setSuccessMessage(data.message);
+
+      setUser({
+        email: email,
+        id: data.user?.id || "temp-id",
+        hasCompletedOnboarding: false,
+      });
+
       return data;
     } catch (err) {
       setError(err.message);

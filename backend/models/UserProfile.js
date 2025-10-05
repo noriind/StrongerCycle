@@ -30,12 +30,6 @@ const userProfileSchema = new mongoose.Schema({
     workoutReminders: { type: Boolean, default: true }
   },
   
-  // App Usage
-  motivationForTracking: { type: String },
-  experienceWithCycleTracking: { 
-    type: String,
-    enum: ['none', 'basic', 'experienced']
-  }
 }, {
   timestamps: true
 });

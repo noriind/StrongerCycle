@@ -1,4 +1,5 @@
 import { NavLink, Routes, Route, Outlet } from "react-router";
+import { useUser } from "./context/UserContext.jsx";
 import Home from "./pages/home/Home.jsx";
 import CycleTracker from "./pages/cycletracker/CycleTracker.jsx";
 import WorkoutForm from "./pages/workoutform/WorkoutForm.jsx";
@@ -8,6 +9,10 @@ import Onboarding from "./pages/onboarding/Onboarding.jsx";
 import "./App.css";
 
 function Layout() {
+  const { user } = useUser();
+
+  console.log("Current user:", user);
+
   return (
     <div className="app-layout">
       <nav className="main-nav">
@@ -18,24 +23,38 @@ function Layout() {
         >
           Home
         </NavLink>
-        <NavLink
-          to="/cycle"
-          className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-        >
-          CycleTracker
-        </NavLink>
-        <NavLink
-          to="/workout"
-          className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-        >
-          WorkoutForm
-        </NavLink>
-        <NavLink
-          to="/auth"
-          className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-        >
-          Login/Register
-        </NavLink>
+
+        {/* Show these ONLY when user is logged in */}
+        {user && (
+          <>
+            <NavLink
+              to="/cycle"
+              className={({ isActive }) =>
+                `nav-link ${isActive ? "active" : ""}`
+              }
+            >
+              CycleTracker
+            </NavLink>
+            <NavLink
+              to="/workout"
+              className={({ isActive }) =>
+                `nav-link ${isActive ? "active" : ""}`
+              }
+            >
+              WorkoutForm
+            </NavLink>
+          </>
+        )}
+
+        {/* Show this ONLY when user is NOT logged in */}
+        {!user && (
+          <NavLink
+            to="/auth"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+          >
+            Login/Register
+          </NavLink>
+        )}
       </nav>
       <div className="content-area">
         <Outlet />
