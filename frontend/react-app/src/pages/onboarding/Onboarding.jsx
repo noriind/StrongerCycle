@@ -11,7 +11,7 @@ export default function Onboarding() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const [successMessage, setSuccessMessage] = useState("");
-	const { user, setUser } = useUser();
+	const { user, updateUser } = useUser();
 
 	const {
 		register,
@@ -21,7 +21,7 @@ export default function Onboarding() {
 		trigger,
 	} = useForm({
 		defaultValues: {
-			email: user()?.email || user?.email, // Include user email
+			email: user?.email, // Include user email
 			firstName: "",
 			age: "",
 			fitnessLevel: "",
@@ -40,7 +40,7 @@ export default function Onboarding() {
 		},
 	});
 
-	const totalSteps = 4;
+	const totalSteps = 3;
 
 	const nextStep = async () => {
 		let fieldsToValidate = [];
@@ -79,13 +79,23 @@ export default function Onboarding() {
 		setIsLoading(true);
 		setError(null);
 
-		try {
-			await onboardingService.saveProfile(data);
+		const formDataWithUser = {
+			userId: user?.id, // Explicitly send user ID
+			email: user?.email, // Email as backup
+			...data, // All form data
+		};
 
-			setUser({
-				...user,
+		console.log(
+			"🔍 Sending onboarding data with user ID:",
+			formDataWithUser
+		);
+
+		try {
+			await onboardingService.saveProfile(formDataWithUser);
+
+			updateUser({
 				hasCompletedOnboarding: true,
-				profile: data,
+				profile: formDataWithUser,
 			});
 
 			setSuccessMessage(
@@ -127,11 +137,11 @@ export default function Onboarding() {
 						<button
 							className={styles.primaryButton}
 							onClick={() => {
-								console.log("Before navigate - user:", user); // Add this
-								navigate("/");
+								console.log("Before navigate - user:", user);
+								navigate("/dashboard");
 							}}
 						>
-							Go to Home
+							Go to Dashboard
 						</button>
 					</div>
 				</div>

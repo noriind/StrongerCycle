@@ -42,7 +42,7 @@ export default function Auth() {
 			if (isLogin) {
 				await login(data.email, data.password);
 				// After successful login, go to dashboard or home
-				navigate("/");
+				navigate("/dashboard");
 			} else {
 				await registerUser(data.email, data.password);
 				// After successful registration, go to onboarding

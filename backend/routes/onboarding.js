@@ -7,6 +7,7 @@ router.post("/profile", async (req, res) => {
 	try {
 		const {
 			userId,
+			email,
 			firstName,
 			age,
 			fitnessLevel,
@@ -21,14 +22,16 @@ router.post("/profile", async (req, res) => {
 			experienceWithCycleTracking,
 		} = req.body;
 
-		const uniqueId = userId || Date.now().toString(); // Uses timestamp as unique ID
+		const profileUserId = userId || email || Date.now().toString();
+
+		console.log("🔍 Creating profile for userId:", profileUserId); // Add debug
 
 		const profileData = {
-			userId: uniqueId,
+			userId: profileUserId,
 			firstName,
 			age,
 			fitnessLevel,
-			goals,
+			goals: goals || [],
 			cycleLength,
 			lastPeriodStart,
 			averagePeriodLength,
@@ -41,10 +44,12 @@ router.post("/profile", async (req, res) => {
 
 		// Upsert (update if exists, create if not)
 		const profile = await UserProfile.findOneAndUpdate(
-			{ userId: uniqueId },
+			{ userId: profileUserId },
 			profileData,
 			{ new: true, upsert: true }
 		);
+
+		console.log("✅ Profile saved with userId:", profile.userId); // Add debug
 
 		res.status(201).json({
 			message: "Profile created/updated successfully",

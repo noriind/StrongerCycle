@@ -9,7 +9,6 @@ class AuthService {
 		});
 
 		const data = await response.json();
-		console.log("User logged in successfully");
 
 		if (!response.ok) {
 			throw new Error(data.error || "Login failed");
@@ -26,7 +25,6 @@ class AuthService {
 		});
 
 		const data = await response.json();
-		console.log("Registered successfully");
 
 		if (!response.ok) {
 			throw new Error(data.error || "Registration failed");

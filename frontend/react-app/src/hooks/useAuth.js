@@ -7,7 +7,7 @@ export const useAuth = () => {
 	const [error, setError] = useState(null);
 	const [successMessage, setSuccessMessage] = useState("");
 
-	const { setUser } = useUser();
+	const { login: setUserLoggedIn } = useUser(); // Use the login method
 
 	const login = async (email, password) => {
 		setIsLoading(true);
@@ -18,10 +18,10 @@ export const useAuth = () => {
 			const data = await authService.login(email, password);
 			setSuccessMessage(data.message);
 
-			setUser({
+			setUserLoggedIn({
 				email: email,
 				id: data.user?.id || "temp-id",
-				hasCompletedOnboarding: false,
+				hasCompletedOnboarding: true, // Existing users completed onboarding
 			});
 
 			return data;
@@ -41,6 +41,13 @@ export const useAuth = () => {
 		try {
 			const data = await authService.register(email, password);
 			setSuccessMessage(data.message);
+
+			setUserLoggedIn({
+				email: email,
+				id: data.user?.id || "temp-id",
+				hasCompletedOnboarding: false, // New users need onboarding
+			});
+
 			return data;
 		} catch (err) {
 			setError(err.message);
