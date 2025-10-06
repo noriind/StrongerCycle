@@ -1,37 +1,37 @@
 const API_BASE = "http://localhost:5000";
 
 class AuthService {
-  async login(email, password) {
-    const response = await fetch(`${API_BASE}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+	async login(email, password) {
+		const response = await fetch(`${API_BASE}/api/auth/login`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ email, password }),
+		});
 
-    const data = await response.json();
+		const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.error || "Login failed");
-    }
+		if (!response.ok) {
+			throw new Error(data.error || "Login failed");
+		}
 
-    return data;
-  }
+		return data;
+	}
 
-  async register(email, password) {
-    const response = await fetch(`${API_BASE}/api/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+	async register(email, password) {
+		const response = await fetch(`${API_BASE}/api/auth/register`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ email, password }),
+		});
 
-    const data = await response.json();
+		const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.error || "Registration failed");
-    }
+		if (!response.ok) {
+			throw new Error(data.error || "Registration failed");
+		}
 
-    return data;
-  }
+		return data;
+	}
 }
 
 export default new AuthService();

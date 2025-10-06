@@ -10,15 +10,15 @@ import Onboarding from "./pages/onboarding/Onboarding.jsx";
 import "./index.css";
 
 render(
-  () => (
-    <Router root={App}>
-      <Route path="/" component={Home} />
-      <Route path="/cycle" component={CycleTracker} />
-      <Route path="/workout" component={WorkoutForm} />
-      <Route path="/auth" component={Auth} />
-      <Route path="/onboarding" component={Onboarding} />
-      <Route path="*404" component={NotFound} />
-    </Router>
-  ),
-  document.getElementById("root")
+	() => (
+		<Router root={App}>
+			<Route path="/" component={Home} />
+			<Route path="/cycle" component={CycleTracker} />
+			<Route path="/workout" component={WorkoutForm} />
+			<Route path="/auth" component={Auth} />
+			<Route path="/onboarding" component={Onboarding} />
+			<Route path="*404" component={NotFound} />
+		</Router>
+	),
+	document.getElementById("root")
 );
