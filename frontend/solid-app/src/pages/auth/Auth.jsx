@@ -37,8 +37,9 @@ export default function Auth() {
 					id: data.user?.id || "temp-id",
 					hasCompletedOnboarding: true,
 				});
-
-				navigate("/");
+				setTimeout(() => {
+					navigate("/dashboard");
+				}, 2000);
 			} else {
 				const data = await authService.register(email(), password());
 				setSuccessMessage(data.message);

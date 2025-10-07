@@ -7,6 +7,7 @@ import WorkoutForm from "./pages/workoutform/WorkoutForm.jsx";
 import Auth from "./pages/auth/Auth.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Onboarding from "./pages/onboarding/Onboarding.jsx";
+import Dashboard from "./pages/dashboard/Dashboard.jsx";
 import "./index.css";
 
 render(
@@ -17,6 +18,7 @@ render(
 			<Route path="/workout" component={WorkoutForm} />
 			<Route path="/auth" component={Auth} />
 			<Route path="/onboarding" component={Onboarding} />
+			<Route path="/dashboard" component={Dashboard} />
 			<Route path="*404" component={NotFound} />
 		</Router>
 	),

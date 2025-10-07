@@ -198,9 +198,9 @@ export default function Onboarding() {
 						<p>{successMessage()}</p>
 						<button
 							class={styles.primaryButton}
-							onClick={() => navigate("/")}
+							onClick={() => navigate("/dashboard")}
 						>
-							Go to Home
+							Go to Dashboard
 						</button>
 					</div>
 				</div>

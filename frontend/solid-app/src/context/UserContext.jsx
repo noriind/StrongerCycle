@@ -14,6 +14,8 @@ export function UserProvider(props) {
 	const logout = () => {
 		setUser(null);
 		localStorage.removeItem("strongcycles_user");
+
+		window.location.href = "/"; // Redirect to home or login page after logout
 	};
 
 	// Check for saved user on startup

@@ -9,10 +9,6 @@ function AppContent(props) {
 	return (
 		<div class="app-layout">
 			<nav class="main-nav">
-				<A href="/" end class="nav-link">
-					Home
-				</A>
-
 				{/* Show these ONLY when user is logged in */}
 				<Show when={isLoggedIn()}>
 					<A href="/cycle" class="nav-link">
@@ -20,6 +16,9 @@ function AppContent(props) {
 					</A>
 					<A href="/workout" class="nav-link">
 						WorkoutForm
+					</A>
+					<A href="/dashboard" class="nav-link">
+						Dashboard
 					</A>
 					<button
 						onClick={logout}
@@ -36,15 +35,13 @@ function AppContent(props) {
 
 				{/* Show this ONLY when user is NOT logged in */}
 				<Show when={!isLoggedIn()}>
+					<A href="/" class="nav-link">
+						Home
+					</A>
 					<A href="/auth" class="nav-link">
 						Login/Register
 					</A>
 				</Show>
-
-				{/* Debug info - remove later */}
-				<span style={{ color: "white", "margin-left": "20px" }}>
-					User: {isLoggedIn() ? "Logged in" : "Not logged in"}
-				</span>
 			</nav>
 
 			<div class="content-area">{props.children}</div>
