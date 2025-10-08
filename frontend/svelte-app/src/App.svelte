@@ -7,6 +7,7 @@
 	import WorkoutForm from "./pages/workoutform/WorkoutForm.svelte";
 	import Auth from "./pages/auth/Auth.svelte";
 	import Onboarding from "./pages/onboarding/Onboarding.svelte";
+	import Dashboard from "./pages/dashboard/Dashboard.svelte";
 	import NotFound from "./pages/NotFound.svelte";
 
 	const routes = new Map([
@@ -14,6 +15,7 @@
 		["/cycle", CycleTracker],
 		["/workout", WorkoutForm],
 		["/auth", Auth],
+		["/dashboard", Dashboard],
 		["/onboarding", Onboarding],
 	]);
 
@@ -23,12 +25,11 @@
 
 <div class="app-layout">
 	<nav class="main-nav">
-		<a use:link href="/" class="nav-link">Home</a>
-
 		<!-- Show these ONLY when user is logged in -->
 		{#if $isLoggedIn}
 			<a use:link href="/cycle" class="nav-link">CycleTracker</a>
 			<a use:link href="/workout" class="nav-link">WorkoutForm</a>
+			<a use:link href="/dashboard" class="nav-link">Dashboard</a>
 			<button
 				on:click={() => userStore.logout()}
 				class="nav-link"
@@ -40,6 +41,8 @@
 
 		<!-- Show this ONLY when user is NOT logged in -->
 		{#if !$isLoggedIn}
+		<a use:link href="/" class="nav-link">Home</a>
+
 			<a use:link href="/auth" class="nav-link">Login/Register</a>
 		{/if}
 		

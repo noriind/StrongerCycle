@@ -24,6 +24,7 @@ function createUserStore() {
 		logout: () => {
 			set(null);
 			localStorage.removeItem("strongcycles_user");
+			window.location.href = "/";
 		},
 		updateUser: updatedData => {
 			update(currentUser => {

@@ -34,7 +34,7 @@
 				});
 
 				setTimeout(() => {
-					navigate("/");
+					navigate("/dashboard");
 				}, 1000);
 			} else {
 				const data = await authService.register(email, password);

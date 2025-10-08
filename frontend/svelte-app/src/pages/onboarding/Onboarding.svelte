@@ -56,6 +56,7 @@
 		error = null;
 
 		const formData = {
+			userId: $userStore?.id, 
 			email: $userStore?.email,
 			firstName,
 			age: parseInt(age),
@@ -108,9 +109,9 @@
 				<p>{successMessage}</p>
 				<button
 					class={styles.primaryButton}
-					on:click={() => navigate("/")}
+					on:click={() => navigate("/dashboard")}
 				>
-					Go to Home
+					Go to Dashboard
 				</button>
 			</div>
 		</div>
