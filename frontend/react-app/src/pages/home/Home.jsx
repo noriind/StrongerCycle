@@ -1,6 +1,6 @@
 import { useUser } from "../../context/UserContext";
 import { useNavigate } from "react-router";
-import styles from "./Home.module.css";
+import styles from "../../../../common/styles/components/Home.module.css";
 
 export default function Home() {
 	const { user } = useUser();

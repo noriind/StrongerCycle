@@ -1,5 +1,5 @@
 import { useState } from "react";
-import authService from "../services/authService";
+import authService from "../../../common/services/authService";
 import { useUser } from "../context/UserContext";
 
 export const useAuth = () => {

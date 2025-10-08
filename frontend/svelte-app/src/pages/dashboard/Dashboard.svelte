@@ -1,8 +1,8 @@
 <script>
 	import { onMount } from "svelte";
 	import { userStore } from "../../stores/userStore.js";
-	import onboardingService from "../../services/onboardingService.js";
-	import styles from "./Dashboard.module.css";
+	import onboardingService from "../../../../common/services/onboardingService.js";
+	import styles from "../../../../common/styles/components/Dashboard.module.css";
 
 	// Render counter for performance testing
 	let renderCount = 0;

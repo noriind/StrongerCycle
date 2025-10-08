@@ -31,5 +31,5 @@ class OnboardingService {
 		return data;
 	}
 }
-
+ 
 export default new OnboardingService();

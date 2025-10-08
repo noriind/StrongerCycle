@@ -1,6 +1,6 @@
 <script>
-	import styles from "./Auth.module.css";
-	import authService from "../../services/authService.js";
+	import styles from "../../../../common/styles/components/Auth.module.css";
+	import authService from "../../../../common/services/authService.js";
 	import { userStore } from "../../stores/userStore.js";
 	import { navigate } from "../../lib/router.js";
 

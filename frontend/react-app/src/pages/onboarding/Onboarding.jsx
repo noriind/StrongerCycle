@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { useUser } from "../../context/UserContext";
-import onboardingService from "../../services/onboardingService";
-import styles from "./Onboarding.module.css";
+import onboardingService from "../../../../common/services/onboardingService.js";
+import styles from "../../../../common/styles/components/Onboarding.module.css";
 
 export default function Onboarding() {
 	const navigate = useNavigate();

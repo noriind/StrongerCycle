@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useUser } from "../../context/UserContext";
-import onboardingService from "../../services/onboardingService";
-import styles from "./Dashboard.module.css";
+import onboardingService from "../../../../common/services/onboardingService";
+import styles from "../../../../common/styles/components/Dashboard.module.css";
 
 export default function Dashboard() {
 	const { user } = useUser();

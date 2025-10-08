@@ -1,7 +1,7 @@
 <script>
 	import { navigate } from "../../lib/router.js";
 	import { userStore, isLoggedIn } from "../../stores/userStore.js";
-	import styles from "./Home.module.css";
+	import styles from "../../../../common/styles/components/Home.module.css";
 
 	// Render counter for performance testing
 	let renderCount = 0;

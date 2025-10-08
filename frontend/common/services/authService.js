@@ -31,7 +31,7 @@ class AuthService {
 		}
 
 		return data;
-	}
+	} 
 }
 
 export default new AuthService();

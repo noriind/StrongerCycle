@@ -1,8 +1,8 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { useUser } from "../../context/UserContext.jsx";
-import styles from "./Auth.module.css";
-import authService from "../../services/authService";
+import styles from "../../../../common/styles/components/Auth.module.css";
+import authService from "../../../../common/services/authService.js";
 
 let renderCount = 0;
 

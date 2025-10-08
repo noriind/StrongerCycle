@@ -1,8 +1,8 @@
 <script>
 	import { navigate } from "../../lib/router.js"; // Using your custom router
 	import { userStore } from "../../stores/userStore.js";
-	import onboardingService from "../../services/onboardingService.js";
-	import styles from "./Onboarding.module.css";
+	import onboardingService from "../../../../common/services/onboardingService.js";
+	import styles from "../../../../common/styles/components/Onboarding.module.css";
 
 	// Render counter for performance testing
 	let renderCount = 0;

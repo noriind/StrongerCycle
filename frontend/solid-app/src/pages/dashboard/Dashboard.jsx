@@ -1,7 +1,7 @@
 import { createSignal, onMount, Show } from "solid-js";
 import { useUser } from "../../context/UserContext.jsx";
-import onboardingService from "../../services/onboardingService.js";
-import styles from "./Dashboard.module.css";
+import onboardingService from "../../../../common/services/onboardingService.js";
+import styles from "../../../../common/styles/components/Dashboard.module.css";
 
 export default function Dashboard() {
 	const { user } = useUser();
