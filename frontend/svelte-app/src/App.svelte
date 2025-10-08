@@ -41,11 +41,10 @@
 
 		<!-- Show this ONLY when user is NOT logged in -->
 		{#if !$isLoggedIn}
-		<a use:link href="/" class="nav-link">Home</a>
+			<a use:link href="/" class="nav-link">Home</a>
 
 			<a use:link href="/auth" class="nav-link">Login/Register</a>
 		{/if}
-		
 	</nav>
 
 	<div class="content-area">

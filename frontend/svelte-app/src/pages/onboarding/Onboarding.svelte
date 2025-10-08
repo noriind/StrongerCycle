@@ -56,7 +56,7 @@
 		error = null;
 
 		const formData = {
-			userId: $userStore?.id, 
+			userId: $userStore?.id,
 			email: $userStore?.email,
 			firstName,
 			age: parseInt(age),
@@ -179,7 +179,6 @@
 								<option value="advanced">Advanced</option>
 							</select>
 						</div>
-
 					{:else if stepComponent === "cycle"}
 						<h2>Cycle Information</h2>
 
@@ -224,7 +223,6 @@
 								max="8"
 							/>
 						</div>
-
 					{:else if stepComponent === "preferences"}
 						<h2>Your Preferences</h2>
 
