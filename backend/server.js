@@ -24,10 +24,12 @@ connectDB();
 //Import routes
 const authRoutes = require("./routes/auth");
 const onboardingRoutes = require("./routes/onboarding");
+const workoutRoutes = require("./routes/workout");
 
 //Use routes
 app.use("/api/auth", authRoutes);
 app.use("/api/onboarding", onboardingRoutes);
+app.use("/api/workout", workoutRoutes);
 
 app.get("/", (req, res) => {
 	res.send("API is running...");

@@ -3,6 +3,7 @@ import { useUser } from "../../context/UserContext";
 import { useNavigate } from "react-router";
 import styles from "../../../../common/styles/WorkoutForm.module.css";
 import SuccessModal from "../../../../common/components/SuccessModal";
+import workoutService from "../../../../common/services/workoutService";
 
 export default function WorkoutForm() {
 	const { user } = useUser();
@@ -96,38 +97,34 @@ export default function WorkoutForm() {
 		setError(null);
 
 		try {
-			// TODO: Create workout service to save to backend
+			// Create workout payload
 			const workoutPayload = {
-				userId: user?.id,
-				...workoutData,
-				createdAt: new Date().toISOString(),
+			  userId: user?.id,
+			  date: workoutData.date,
+			  type: workoutData.type,
+			  duration: workoutData.duration ? parseInt(workoutData.duration) : null,
+			  intensity: parseInt(workoutData.intensity),
+			  exercises: workoutData.exercises,
+			  notes: workoutData.notes
 			};
-
-			console.log("Saving workout:", workoutPayload);
-
-			// Simulate API call for now
-			await new Promise(resolve => setTimeout(resolve, 1000));
-
+	  
+			console.log('Saving workout to backend:', workoutPayload);
+			
+			// Save to backend using real service
+			const response = await workoutService.createWorkout(workoutPayload);
+			
+			console.log('✅ Workout saved successfully:', response);
+			
+			// Show success modal
 			setShowSuccessModal(true);
-
-			// Reset form after successful save
-			setTimeout(() => {
-				setWorkoutData({
-					date: new Date().toISOString().split("T")[0],
-					type: "",
-					duration: "",
-					intensity: 5,
-					exercises: [],
-					notes: "",
-				});
-				setSuccessMessage("");
-			}, 2000);
-		} catch (err) {
-			setError(err.message || "Failed to save workout");
-		} finally {
+			
+		  } catch (err) {
+			console.error('❌ Failed to save workout:', err);
+			setError(err.message || 'Failed to save workout');
+		  } finally {
 			setIsLoading(false);
-		}
-	};
+		  }
+		};
 
 	const handleModalClose = () => {
 		// Reset form
