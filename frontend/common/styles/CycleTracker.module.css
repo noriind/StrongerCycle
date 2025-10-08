@@ -1,7 +1,7 @@
 .pageWrapper {
     min-height: 100vh;
     padding: 2rem;
-    background: #0f172a;
+    background: var(--bg-dark);
   }
   
   .container {

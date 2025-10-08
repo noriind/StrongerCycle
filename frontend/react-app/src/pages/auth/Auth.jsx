@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "../../hooks/useAuth";
 import { useRef } from "react";
 import { useNavigate } from "react-router";
-import styles from "../../../../common/styles/components/Auth.module.css";
+import styles from "../../../../common/styles/Auth.module.css";
 
 export default function Auth() {
 	// for checking the re-renders

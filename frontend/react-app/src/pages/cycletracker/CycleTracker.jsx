@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useUser } from "../../context/UserContext";
 import onboardingService from "../../../../common/services/onboardingService.js";
-import styles from "../../../../common/styles/components/CycleTracker.module.css";
+import styles from "../../../../common/styles/CycleTracker.module.css";
 
 export default function CycleTracker() {
 	const { user } = useUser();
