@@ -2,7 +2,7 @@ import { createSignal, Show, For } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { useUser } from "../../context/UserContext.jsx";
 import onboardingService from "../../../../common/services/onboardingService.js";
-import styles from "../../../../common/styles/components/Onboarding.module.css";
+import styles from "../../../../common/styles/Onboarding.module.css";
 
 export default function Onboarding() {
 	let renderCount = 0;

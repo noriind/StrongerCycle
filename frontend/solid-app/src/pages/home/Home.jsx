@@ -1,7 +1,7 @@
 import { useUser } from "../../context/UserContext.jsx";
 import { useNavigate } from "@solidjs/router";
 import { Show } from "solid-js";
-import styles from "../../../../common/styles/components/Home.module.css";
+import styles from "../../../../common/styles/Home.module.css";
 
 export default function Home() {
 	const { user, isLoggedIn } = useUser();
