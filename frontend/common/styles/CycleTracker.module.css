@@ -460,3 +460,321 @@
       font-size: 0.7rem;
     }
   }
+
+  /* Workout Integration Styles */
+.statsBar {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.statItem {
+  text-align: center;
+  color: white;
+}
+
+.statNumber {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, #ff6b6b, #feca57);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.25rem;
+}
+
+.hasWorkout {
+  position: relative;
+}
+
+.workoutIndicators {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+  z-index: 2;
+}
+
+.workoutDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+  animation: workoutPulse 2s infinite;
+}
+
+/* Workout Type Colors for Dots */
+.workoutDot.strengthtraining {
+  background: #ff4757;
+  box-shadow: 0 0 8px rgba(255, 71, 87, 0.6);
+}
+
+.workoutDot.cardio {
+  background: #ff8c00;
+  box-shadow: 0 0 8px rgba(255, 140, 0, 0.6);
+}
+
+.workoutDot.yoga {
+  background: #00bfff;
+  box-shadow: 0 0 8px rgba(0, 191, 255, 0.6);
+}
+
+.workoutDot.pilates {
+  background: #8a2be2;
+  box-shadow: 0 0 8px rgba(138, 43, 226, 0.6);
+}
+
+.workoutDot.running {
+  background: #32cd32;
+  box-shadow: 0 0 8px rgba(50, 205, 50, 0.6);
+}
+
+.workoutDot.swimming {
+  background: #1e90ff;
+  box-shadow: 0 0 8px rgba(30, 144, 255, 0.6);
+}
+
+.workoutDot.cycling {
+  background: #ff6347;
+  box-shadow: 0 0 8px rgba(255, 99, 71, 0.6);
+}
+
+.workoutDot.other {
+  background: #dda0dd;
+  box-shadow: 0 0 8px rgba(221, 160, 221, 0.6);
+}
+
+.workoutDot:last-child {
+  background: #ffd700;
+  font-size: 0.6rem;
+  font-weight: bold;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.workoutHistory {
+  background: #0f172a;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  border: 1px solid #334155;
+}
+
+.workoutHistory h3 {
+  color: #f1f5f9;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.workoutHistory h3::before {
+  content: "📋";
+  font-size: 1.5rem;
+}
+
+.workoutList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.workoutItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 1rem;
+  transition: all 0.2s ease;
+}
+
+.workoutItem:hover {
+  border-color: #475569;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.workoutDate {
+  background: #334155;
+  color: #cbd5e1;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  min-width: 100px;
+  text-align: center;
+}
+
+.workoutInfo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  flex: 1;
+}
+
+.workoutInfo strong {
+  color: #f1f5f9;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.workoutInfo span {
+  background: #475569;
+  color: #cbd5e1;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.hasWorkout:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.hasWorkout:hover .workoutIndicators {
+  transform: translateX(-50%) translateY(-2px);
+}
+
+.hasWorkout:hover .workoutDot {
+  transform: scale(1.2);
+  box-shadow: 0 0 12px currentColor;
+}
+
+/* Animations */
+@keyframes workoutPulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .statsBar {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .statNumber {
+    font-size: 1.5rem;
+  }
+
+  .workoutItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .workoutInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .workoutDate {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsBar {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .workoutIndicators {
+    gap: 1px;
+  }
+
+  .workoutDot {
+    width: 5px;
+    height: 5px;
+  }
+
+  .workoutHistory {
+    padding: 1rem;
+  }
+}
+
+.legend {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.legend:has(.workoutLegend) {
+  grid-template-columns: 1fr 1fr;
+}
+
+.workoutLegend {
+  background: #0f172a;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #334155;
+}
+
+.workoutLegend h3 {
+  color: #f1f5f9;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.workoutLegendItems {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.5rem;
+}
+
+.workoutLegendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.workoutLegendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.workoutLegendItem span {
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 400;
+}

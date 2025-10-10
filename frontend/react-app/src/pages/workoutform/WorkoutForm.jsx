@@ -99,32 +99,33 @@ export default function WorkoutForm() {
 		try {
 			// Create workout payload
 			const workoutPayload = {
-			  userId: user?.id,
-			  date: workoutData.date,
-			  type: workoutData.type,
-			  duration: workoutData.duration ? parseInt(workoutData.duration) : null,
-			  intensity: parseInt(workoutData.intensity),
-			  exercises: workoutData.exercises,
-			  notes: workoutData.notes
+				userId: user?.id,
+				date: workoutData.date,
+				type: workoutData.type,
+				duration: workoutData.duration
+					? parseInt(workoutData.duration)
+					: null,
+				intensity: parseInt(workoutData.intensity),
+				exercises: workoutData.exercises,
+				notes: workoutData.notes,
 			};
-	  
-			console.log('Saving workout to backend:', workoutPayload);
-			
+
+			console.log("Saving workout to backend:", workoutPayload);
+
 			// Save to backend using real service
 			const response = await workoutService.createWorkout(workoutPayload);
-			
-			console.log('✅ Workout saved successfully:', response);
-			
+
+			console.log("✅ Workout saved successfully:", response);
+
 			// Show success modal
 			setShowSuccessModal(true);
-			
-		  } catch (err) {
-			console.error('❌ Failed to save workout:', err);
-			setError(err.message || 'Failed to save workout');
-		  } finally {
+		} catch (err) {
+			console.error("❌ Failed to save workout:", err);
+			setError(err.message || "Failed to save workout");
+		} finally {
 			setIsLoading(false);
-		  }
-		};
+		}
+	};
 
 	const handleModalClose = () => {
 		// Reset form
