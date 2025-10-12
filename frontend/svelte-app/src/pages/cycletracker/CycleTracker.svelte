@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import { userStore } from '../../stores/userStore.js';
     import onboardingService from '../../../../common/services/onboardingService.js';
-    import styles from '../../../../common/styles/components/CycleTracker.module.css';
+    import styles from '../../../../common/styles/CycleTracker.module.css';
   
     // Render counter for performance testing
     let renderCount = 0;
