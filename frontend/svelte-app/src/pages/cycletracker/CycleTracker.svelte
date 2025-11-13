@@ -1,19 +1,53 @@
 <script>
-	import { onMount } from "svelte";
+	import { onMount, tick } from "svelte";
 	import { userStore } from "../../stores/userStore.js";
 	import onboardingService from "../../../../common/services/onboardingService.js";
 	import workoutService from "../../../../common/services/workoutService.js";
 	import styles from "../../../../common/styles/CycleTracker.module.css";
 
-	// Render counter for performance testing
-	let renderCount = 0;
-	renderCount++;
-	console.log("🔄 Svelte CycleTracker render count:", renderCount, "times");
+	// ===== PERFORMANCE INSTRUMENTATION SETUP =====
+	// @ts-ignore
+	if (!window.performanceMetrics) {
+    // @ts-ignore
+    window.performanceMetrics = {
+      svelte: {
+        monthNavigation: [],
+        calendarRender: [],
+        initialLoad: null
+      }
+    };
+  }
+
+  const recordMetric = (category, duration) => {
+    // @ts-ignore
+    window.performanceMetrics.svelte[category].push(duration);
+    console.log(`📊 Svelte ${category}: ${duration.toFixed(2)}ms`);
+  };
+
+  	// @ts-ignore
+	window.exportSvelteMetrics = () => {
+		// @ts-ignore
+		const metrics = window.performanceMetrics.svelte;
+		const avg = arr => arr.length ? (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2) : 0;
+		
+		console.log("=== SVELTE PERFORMANCE METRICS ===");
+		console.log(`Month Navigation (${metrics.monthNavigation.length} samples):`);
+		console.log(`  Average: ${avg(metrics.monthNavigation)}ms`);
+		console.log(`  Min: ${Math.min(...metrics.monthNavigation).toFixed(2)}ms`);
+		console.log(`  Max: ${Math.max(...metrics.monthNavigation).toFixed(2)}ms`);
+		console.log(`Calendar Render (${metrics.calendarRender.length} samples):`);
+		console.log(`  Average: ${avg(metrics.calendarRender)}ms`);
+		console.log(`Initial Load: ${metrics.initialLoad?.toFixed(2)}ms`);
+		
+		return metrics;
+	};
+	// ===== END INSTRUMENTATION SETUP =====
 
 	let profileData = null;
 	let workoutData = [];
 	let loading = true;
 	let currentDate = new Date();
+	let loadStartTime = performance.now();
 
 	onMount(async () => {
 		const fetchData = async () => {
@@ -23,7 +57,6 @@
 			}
 
 			try {
-				// Fetch both profile and workout data
 				const [profileResponse, workoutResponse] = await Promise.all([
 					onboardingService
 						.getProfile($userStore.id)
@@ -40,9 +73,15 @@
 					"📊 Loaded workouts:",
 					workoutResponse.workouts?.length || 0
 				);
+
+				// Record initial load time
+				const loadTime = performance.now() - loadStartTime;
+				// @ts-ignore
+				window.performanceMetrics.svelte.initialLoad = loadTime;
+				console.log(`📊 Svelte Initial Load: ${loadTime.toFixed(2)}ms`);
+				
 			} catch (err) {
 				console.error("Error loading data:", err);
-				// Fallback to user profile if available
 				if ($userStore.profile) {
 					profileData = $userStore.profile;
 				}
@@ -54,7 +93,6 @@
 		fetchData();
 	});
 
-	// Get workouts for a specific date
 	function getWorkoutsForDate(date) {
 		const dateStr = date.toISOString().split("T")[0];
 		return workoutData.filter(workout => {
@@ -65,7 +103,6 @@
 		});
 	}
 
-	// Calculate cycle phase for a given date
 	function getCyclePhase(date) {
 		if (!profileData?.lastPeriodStart) return "unknown";
 
@@ -89,8 +126,10 @@
 		}
 	}
 
-	// Generate calendar days for current month
 	function generateCalendarDays() {
+		// ===== INSTRUMENTATION: Start calendar render measurement =====
+		const renderStart = performance.now();
+
 		const year = currentDate.getFullYear();
 		const month = currentDate.getMonth();
 
@@ -101,7 +140,6 @@
 		const days = [];
 		const currentDay = new Date(startDate);
 
-		// Generate 42 days (6 weeks) for calendar grid
 		for (let i = 0; i < 42; i++) {
 			const dateObj = new Date(currentDay);
 			const isCurrentMonth = dateObj.getMonth() === month;
@@ -122,10 +160,13 @@
 			currentDay.setDate(currentDay.getDate() + 1);
 		}
 
+		// ===== INSTRUMENTATION: End calendar render measurement =====
+		const renderTime = performance.now() - renderStart;
+		recordMetric('calendarRender', renderTime);
+
 		return days;
 	}
 
-	// Calculate monthly workout stats
 	function getMonthlyStats() {
 		const currentMonth = currentDate.getMonth();
 		const currentYear = currentDate.getFullYear();
@@ -150,10 +191,23 @@
 		};
 	}
 
-	function navigateMonth(direction) {
+	async function navigateMonth(direction) {
+		// ===== INSTRUMENTATION: Start month navigation measurement =====
+		const navStart = performance.now();
+		
 		const newDate = new Date(currentDate);
 		newDate.setMonth(newDate.getMonth() + direction);
 		currentDate = newDate;
+		
+		// Wait for Svelte to finish rendering
+		await tick();
+		
+		// Measure after next frame
+		requestAnimationFrame(() => {
+			const navTime = performance.now() - navStart;
+			recordMetric('monthNavigation', navTime);
+		});
+		// ===== END INSTRUMENTATION =====
 	}
 
 	const monthNames = [
@@ -173,7 +227,7 @@
 
 	const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-	// Reactive calendar days and stats - automatically updates when currentDate or workoutData changes
+	// Reactive calendar days and stats
 	$: calendarDays = profileData && workoutData ? generateCalendarDays() : [];
 	$: monthlyStats =
 		workoutData.length >= 0
@@ -181,7 +235,6 @@
 			: { total: 0, types: {}, workouts: [] };
 </script>
 
-<!-- Loading State -->
 {#if loading}
 	<div class={styles.pageWrapper}>
 		<div class={styles.loadingContainer}>
@@ -189,8 +242,6 @@
 			<p>Loading your cycle data...</p>
 		</div>
 	</div>
-
-	<!-- Empty State -->
 {:else if !profileData}
 	<div class={styles.pageWrapper}>
 		<div class={styles.emptyState}>
@@ -204,8 +255,6 @@
 			</button>
 		</div>
 	</div>
-
-	<!-- Calendar Content -->
 {:else}
 	<div class={styles.pageWrapper}>
 		<div class={styles.container}>
@@ -214,7 +263,6 @@
 				<p>Track your menstrual cycle and workout progress together</p>
 			</header>
 
-			<!-- Calendar Navigation -->
 			<div class={styles.calendarHeader}>
 				<button
 					class={styles.navButton}
@@ -234,9 +282,7 @@
 				</button>
 			</div>
 
-			<!-- Calendar with Workout Integration -->
 			<div class={styles.calendar}>
-				<!-- Day Headers -->
 				<div class={styles.dayHeaders}>
 					{#each dayNames as day}
 						<div class={styles.dayHeader}>
@@ -245,7 +291,6 @@
 					{/each}
 				</div>
 
-				<!-- Calendar Days -->
 				<div class={styles.calendarGrid}>
 					{#each calendarDays as dayObj}
 						<div
@@ -260,7 +305,6 @@
 						>
 							<span class={styles.dayNumber}>{dayObj.day}</span>
 
-							<!-- Workout indicator dots -->
 							{#if dayObj.workouts.length > 0}
 								<div class={styles.workoutIndicators}>
 									{#each dayObj.workouts.slice(0, 3) as workout}
@@ -281,9 +325,7 @@
 				</div>
 			</div>
 
-			<!-- Enhanced Legend with Both Cycle and Workout Types -->
 			<div class={styles.legend}>
-				<!-- Cycle Phases Legend -->
 				<div class={styles.cyclePhases}>
 					<h3>Cycle Phases</h3>
 					<div class={styles.legendItems}>
@@ -324,7 +366,6 @@
 				</div>
 			</div>
 
-			<!-- Monthly Stats Bar -->
 			<div class={styles.statsBar}>
 				<div class={styles.statItem}>
 					<span class={styles.statNumber}>{monthlyStats.total}</span>
@@ -342,7 +383,6 @@
 				{/each}
 			</div>
 
-			<!-- Workout History Section -->
 			{#if monthlyStats.workouts.length > 0}
 				<div class={styles.workoutHistory}>
 					<h3>Recent Workouts</h3>

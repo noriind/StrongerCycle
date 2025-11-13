@@ -4,12 +4,46 @@ import onboardingService from "../../../../common/services/onboardingService.js"
 import styles from "../../../../common/styles/CycleTracker.module.css";
 import workoutService from "../../../../common/services/workoutService.js";
 
+// ===== PERFORMANCE INSTRUMENTATION SETUP =====
+if (!window.performanceMetrics) {
+	window.performanceMetrics = {
+		solid: {
+			monthNavigation: [],
+			calendarRender: [],
+			initialLoad: null
+		}
+	};
+}
+
+const recordMetric = (category, duration) => {
+	window.performanceMetrics.solid[category].push(duration);
+	console.log(`📊 Solid ${category}: ${duration.toFixed(2)}ms`);
+};
+
+window.exportSolidMetrics = () => {
+	const metrics = window.performanceMetrics.solid;
+	const avg = arr => arr.length ? (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2) : 0;
+	
+	console.log("=== SOLID.JS PERFORMANCE METRICS ===");
+	console.log(`Month Navigation (${metrics.monthNavigation.length} samples):`);
+	console.log(`  Average: ${avg(metrics.monthNavigation)}ms`);
+	console.log(`  Min: ${Math.min(...metrics.monthNavigation).toFixed(2)}ms`);
+	console.log(`  Max: ${Math.max(...metrics.monthNavigation).toFixed(2)}ms`);
+	console.log(`Calendar Render (${metrics.calendarRender.length} samples):`);
+	console.log(`  Average: ${avg(metrics.calendarRender)}ms`);
+	console.log(`Initial Load: ${metrics.initialLoad?.toFixed(2)}ms`);
+	
+	return metrics;
+};
+// ===== END INSTRUMENTATION SETUP =====
+
 export default function CycleTracker() {
 	const { user } = useUser();
 	const [profileData, setProfileData] = createSignal(null);
 	const [workoutData, setWorkoutData] = createSignal([]);
 	const [loading, setLoading] = createSignal(true);
 	const [currentDate, setCurrentDate] = createSignal(new Date());
+	let loadStartTime = performance.now();
 
 	onMount(async () => {
 		const fetchData = async () => {
@@ -19,7 +53,6 @@ export default function CycleTracker() {
 			}
 
 			try {
-				// Fetch both profile and workout data
 				const [profileResponse, workoutResponse] = await Promise.all([
 					onboardingService
 						.getProfile(user().id)
@@ -36,9 +69,14 @@ export default function CycleTracker() {
 					"📊 Loaded workouts:",
 					workoutResponse.workouts?.length || 0
 				);
+
+				// Record initial load time
+				const loadTime = performance.now() - loadStartTime;
+				window.performanceMetrics.solid.initialLoad = loadTime;
+				console.log(`📊 Solid Initial Load: ${loadTime.toFixed(2)}ms`);
+				
 			} catch (err) {
 				console.error("Error loading data:", err);
-				// Fallback to user profile
 				if (user().profile) {
 					setProfileData(user().profile);
 				}
@@ -60,7 +98,6 @@ export default function CycleTracker() {
 		});
 	};
 
-	// Calculate cycle phase for a given date
 	const getCyclePhase = date => {
 		const profile = profileData();
 		if (!profile?.lastPeriodStart) return "unknown";
@@ -85,8 +122,10 @@ export default function CycleTracker() {
 		}
 	};
 
-	// Generate calendar days with workout data
 	const generateCalendarDays = () => {
+		// ===== INSTRUMENTATION: Start calendar render measurement =====
+		const renderStart = performance.now();
+
 		const current = currentDate();
 		const year = current.getFullYear();
 		const month = current.getMonth();
@@ -104,7 +143,7 @@ export default function CycleTracker() {
 			const isToday =
 				dateObj.toDateString() === new Date().toDateString();
 			const phase = isCurrentMonth ? getCyclePhase(dateObj) : "unknown";
-			const workouts = getWorkoutsForDate(dateObj); // Add workouts for this day
+			const workouts = getWorkoutsForDate(dateObj);
 
 			days.push({
 				date: dateObj,
@@ -112,16 +151,19 @@ export default function CycleTracker() {
 				isCurrentMonth,
 				isToday,
 				phase,
-				workouts, // Add workout data
+				workouts,
 			});
 
 			currentDay.setDate(currentDay.getDate() + 1);
 		}
 
+		// ===== INSTRUMENTATION: End calendar render measurement =====
+		const renderTime = performance.now() - renderStart;
+		recordMetric('calendarRender', renderTime);
+
 		return days;
 	};
 
-	// Calculate monthly workout stats
 	const getMonthlyStats = () => {
 		const current = currentDate();
 		const currentMonth = current.getMonth();
@@ -148,9 +190,19 @@ export default function CycleTracker() {
 	};
 
 	const navigateMonth = direction => {
+		// ===== INSTRUMENTATION: Start month navigation measurement =====
+		const navStart = performance.now();
+		
 		const newDate = new Date(currentDate());
 		newDate.setMonth(newDate.getMonth() + direction);
 		setCurrentDate(newDate);
+		
+		// Measure after Solid has updated the DOM
+		requestAnimationFrame(() => {
+			const navTime = performance.now() - navStart;
+			recordMetric('monthNavigation', navTime);
+		});
+		// ===== END INSTRUMENTATION =====
 	};
 
 	const monthNames = [
@@ -170,7 +222,6 @@ export default function CycleTracker() {
 
 	const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-	// Reactive calendar days
 	const calendarDays = () => generateCalendarDays();
 	const monthlyStats = () => getMonthlyStats();
 
@@ -210,7 +261,6 @@ export default function CycleTracker() {
 								</p>
 							</header>
 
-							{/* Calendar Navigation */}
 							<div class={styles.calendarHeader}>
 								<button
 									class={styles.navButton}
@@ -230,9 +280,7 @@ export default function CycleTracker() {
 								</button>
 							</div>
 
-							{/* Calendar with Workout Integration */}
 							<div class={styles.calendar}>
-								{/* Day Headers */}
 								<div class={styles.dayHeaders}>
 									<For each={dayNames}>
 										{day => (
@@ -243,7 +291,6 @@ export default function CycleTracker() {
 									</For>
 								</div>
 
-								{/* Calendar Days */}
 								<div class={styles.calendarGrid}>
 									<For each={calendarDays()}>
 										{dayObj => (
@@ -260,7 +307,6 @@ export default function CycleTracker() {
 												<span class={styles.dayNumber}>
 													{dayObj.day}
 												</span>
-												{/* Workout indicator dots */}
 												<Show
 													when={
 														dayObj.workouts.length >
@@ -309,9 +355,7 @@ export default function CycleTracker() {
 								</div>
 							</div>
 
-							{/* Enhanced Legend with Both Cycle and Workout Types */}
 							<div class={styles.legend}>
-								{/* Cycle Phases Legend */}
 								<div class={styles.cyclePhases}>
 									<h3>Cycle Phases</h3>
 									<div class={styles.legendItems}>
@@ -359,7 +403,6 @@ export default function CycleTracker() {
 								</div>
 							</div>
 
-							{/* Monthly Stats Bar */}
 							<div class={styles.statsBar}>
 								<div class={styles.statItem}>
 									<span class={styles.statNumber}>
@@ -389,7 +432,6 @@ export default function CycleTracker() {
 								</For>
 							</div>
 
-							{/* Workout History Section */}
 							<Show when={monthlyStats().workouts.length > 0}>
 								<div class={styles.workoutHistory}>
 									<h3>Recent Workouts</h3>

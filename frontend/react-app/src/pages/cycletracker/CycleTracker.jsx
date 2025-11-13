@@ -1,8 +1,44 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUser } from "../../context/UserContext";
 import onboardingService from "../../../../common/services/onboardingService.js";
 import workoutService from "../../../../common/services/workoutService.js";
 import styles from "../../../../common/styles/CycleTracker.module.css";
+
+// ===== PERFORMANCE INSTRUMENTATION SETUP =====
+// This creates a global object to collect all performance metrics
+if (!window.performanceMetrics) {
+	window.performanceMetrics = {
+		react: {
+			monthNavigation: [],
+			calendarRender: [],
+			initialLoad: null
+		}
+	};
+}
+
+// Helper function to record metrics
+const recordMetric = (category, duration) => {
+	window.performanceMetrics.react[category].push(duration);
+	console.log(`📊 React ${category}: ${duration.toFixed(2)}ms`);
+};
+
+// Helper to export metrics for your thesis
+window.exportReactMetrics = () => {
+	const metrics = window.performanceMetrics.react;
+	const avg = arr => arr.length ? (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2) : 0;
+	
+	console.log("=== REACT PERFORMANCE METRICS ===");
+	console.log(`Month Navigation (${metrics.monthNavigation.length} samples):`);
+	console.log(`  Average: ${avg(metrics.monthNavigation)}ms`);
+	console.log(`  Min: ${Math.min(...metrics.monthNavigation).toFixed(2)}ms`);
+	console.log(`  Max: ${Math.max(...metrics.monthNavigation).toFixed(2)}ms`);
+	console.log(`Calendar Render (${metrics.calendarRender.length} samples):`);
+	console.log(`  Average: ${avg(metrics.calendarRender)}ms`);
+	console.log(`Initial Load: ${metrics.initialLoad?.toFixed(2)}ms`);
+	
+	return metrics;
+};
+// ===== END INSTRUMENTATION SETUP =====
 
 export default function CycleTracker() {
 	const { user } = useUser();
@@ -10,6 +46,10 @@ export default function CycleTracker() {
 	const [workoutData, setWorkoutData] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [currentDate, setCurrentDate] = useState(new Date());
+	
+	// Ref to track if this is initial mount
+	const isInitialMount = useRef(true);
+	const loadStartTime = useRef(performance.now());
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -36,6 +76,14 @@ export default function CycleTracker() {
 					"📊 Loaded workouts:",
 					workoutResponse.workouts?.length || 0
 				);
+				
+				// Record initial load time
+				if (isInitialMount.current) {
+					const loadTime = performance.now() - loadStartTime.current;
+					window.performanceMetrics.react.initialLoad = loadTime;
+					console.log(`📊 React Initial Load: ${loadTime.toFixed(2)}ms`);
+					isInitialMount.current = false;
+				}
 			} catch (err) {
 				console.error("Error loading data:", err);
 				// Fallback to user profile
@@ -87,6 +135,9 @@ export default function CycleTracker() {
 
 	// Generate calendar days with workout data
 	const generateCalendarDays = () => {
+		// ===== INSTRUMENTATION: Start calendar render measurement =====
+		const renderStart = performance.now();
+		
 		const year = currentDate.getFullYear();
 		const month = currentDate.getMonth();
 
@@ -104,7 +155,7 @@ export default function CycleTracker() {
 			const isToday =
 				dateObj.toDateString() === new Date().toDateString();
 			const phase = isCurrentMonth ? getCyclePhase(dateObj) : "unknown";
-			const workouts = getWorkoutsForDate(dateObj); // Add workouts for this day
+			const workouts = getWorkoutsForDate(dateObj);
 
 			days.push({
 				date: dateObj,
@@ -112,11 +163,15 @@ export default function CycleTracker() {
 				isCurrentMonth,
 				isToday,
 				phase,
-				workouts, // Add workout data
+				workouts,
 			});
 
 			current.setDate(current.getDate() + 1);
 		}
+
+		// ===== INSTRUMENTATION: End calendar render measurement =====
+		const renderTime = performance.now() - renderStart;
+		recordMetric('calendarRender', renderTime);
 
 		return days;
 	};
@@ -147,9 +202,19 @@ export default function CycleTracker() {
 	};
 
 	const navigateMonth = direction => {
+		// ===== INSTRUMENTATION: Start month navigation measurement =====
+		const navStart = performance.now();
+		
 		const newDate = new Date(currentDate);
 		newDate.setMonth(newDate.getMonth() + direction);
 		setCurrentDate(newDate);
+		
+		// Measure after React has re-rendered (next frame)
+		requestAnimationFrame(() => {
+			const navTime = performance.now() - navStart;
+			recordMetric('monthNavigation', navTime);
+		});
+		// ===== END INSTRUMENTATION =====
 	};
 
 	const monthNames = [
