@@ -11,22 +11,16 @@ export default function Dashboard() {
 
 	useEffect(() => {
 		const fetchProfileData = async () => {
-			console.log("Dashboard useEffect - user:", user); // Add debug
-
 			if (!user?.id) {
-				console.log("No user ID found"); // Add debug
 				setLoading(false);
 				return;
 			}
 
 			try {
 				setLoading(true);
-				console.log("Fetching profile for user:", user.id); // Add debug
 				const data = await onboardingService.getProfile(user.id);
-				console.log("Profile data received:", data); // Add debug
 				setProfileData(data.profile);
 			} catch (err) {
-				console.error("Dashboard fetch error:", err); // Add debug
 				setError(err.message);
 			} finally {
 				setLoading(false);

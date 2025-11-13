@@ -9,7 +9,6 @@ export default function Auth() {
 	// for checking the re-renders
 	const renderCount = useRef(0);
 	renderCount.current++;
-	console.log("Auth component render count:", renderCount.current, "times");
 	const [isLogin, setIsLogin] = useState(true);
 	const navigate = useNavigate();
 	const {
@@ -35,7 +34,14 @@ export default function Auth() {
 		},
 	});
 
+	const emailValue = watch("email");
+	const passwordValue = watch("password");
 	const password = watch("password");
+
+	// Consolidated logging
+	console.log("Email value:", emailValue);
+	console.log("Password value:", passwordValue);
+	console.log("Auth component render count:", renderCount.current, "times");
 
 	const onSubmit = async data => {
 		try {

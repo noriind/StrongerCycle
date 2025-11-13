@@ -22,7 +22,7 @@
 		successMessage = "";
 		isLoading = true;
 
-		try {
+		try { 
 			if (isLogin) {
 				const data = await authService.login(email, password);
 				successMessage = data.message;

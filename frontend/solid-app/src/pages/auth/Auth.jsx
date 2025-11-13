@@ -24,7 +24,7 @@ export default function Auth() {
 	const handleSubmit = async e => {
 		e.preventDefault();
 		setError(null);
-		setSuccessMessage("");
+		setSuccessMessage(""); 
 		setIsLoading(true);
 
 		try {
